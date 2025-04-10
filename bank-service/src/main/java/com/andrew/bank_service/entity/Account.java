@@ -6,6 +6,8 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.time.LocalDate;
+
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
@@ -36,5 +38,9 @@ public class Account {
     @NotNull(message = "Balance is required")
     @DecimalMin(value = "0.0", inclusive = true, message = "Balance must be non-negative")
     private Double balance;
+
+    @NotNull(message = "Expiry date is required")
+    @Future(message = "Expiry date must be in the future")
+    private LocalDate expiryDate;
 
 }
