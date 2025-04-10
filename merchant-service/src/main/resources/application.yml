@@ -1,0 +1,12 @@
+spring:
+  application:
+    name: merchant-service
+  datasource:
+    url: jdbc:mysql://localhost:3308/merchant_service
+    username: root
+    password: root
+  jpa:
+    hibernate:
+      ddl-auto: update
+server:
+  port: 8091

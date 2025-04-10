@@ -37,6 +37,19 @@ services:
     volumes:
       - bank_data:/var/lib/mysql
 
+  mysql-merchant:
+    image: mysql
+    container_name: mysql-merchant
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: merchant_service
+    ports:
+      - "3308:3306"
+    volumes:
+      - merchant_data:/var/lib/mysql
+
 
 volumes:
   bank_data:
+  merchant_data:
