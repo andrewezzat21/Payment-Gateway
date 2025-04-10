@@ -1,5 +1,7 @@
 package com.andrew.merchant_service.service;
 
+import com.andrew.merchant_service.dto.ApiKeyResponse;
+import com.andrew.merchant_service.dto.LoginDTO;
 import com.andrew.merchant_service.dto.MerchantDTO;
 import com.andrew.merchant_service.dto.MerchantResponse;
 import com.andrew.merchant_service.entity.Merchant;
@@ -72,5 +74,21 @@ public class MerchantService {
                 .lastName(merchantDetails.getLastName())
                 .email(merchant.getEmail())
                 .build();
+    }
+
+    public ApiKeyResponse merchantLogin(LoginDTO loginDTO) {
+        Merchant merchant = merchantRepository.findByEmail(loginDTO.email()).
+                orElseThrow(() -> new RuntimeException("Email and/or Password is incorrect!"));
+
+        if (!passwordEncoder.matches(loginDTO.password(), merchant.getPassword())) {
+            throw new RuntimeException("Email and/or Password is incorrect!");
+        }
+
+        return new ApiKeyResponse(merchant.getApiKey());
+    }
+
+    public Merchant getProfile(String apiKey) {
+        return merchantRepository.findByApiKey(apiKey)
+                .orElseThrow(() -> new RuntimeException("Profile not Found!"));
     }
 }

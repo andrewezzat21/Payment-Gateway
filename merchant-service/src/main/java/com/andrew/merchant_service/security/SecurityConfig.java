@@ -36,7 +36,8 @@ public class SecurityConfig {
                 .authorizeHttpRequests(auth -> {
                     auth
 //                            .requestMatchers("/error").permitAll()
-                            .requestMatchers(HttpMethod.POST, "/api/v1/merchants").permitAll()
+                            .requestMatchers(HttpMethod.GET, "/api/v1/merchants/login").permitAll()
+                            .requestMatchers(HttpMethod.POST, "/api/v1/merchants/register").permitAll()
                             .anyRequest().authenticated();
                 })
                 .addFilterBefore(filter, UsernamePasswordAuthenticationFilter.class)

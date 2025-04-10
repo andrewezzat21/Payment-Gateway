@@ -1,8 +1,7 @@
 package com.andrew.merchant_service.controller;
 
-import com.andrew.merchant_service.dto.ApiResponse;
-import com.andrew.merchant_service.dto.MerchantDTO;
-import com.andrew.merchant_service.dto.MerchantResponse;
+import com.andrew.merchant_service.dto.*;
+import com.andrew.merchant_service.entity.Merchant;
 import com.andrew.merchant_service.service.MerchantService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -19,12 +18,27 @@ public class MerchantController {
 
     private final MerchantService merchantService;
 
-    @GetMapping
-    public String helloWorld(){
-        return "HelloWorld";
+    @GetMapping("/login")
+    public ResponseEntity<ApiResponse<ApiKeyResponse>> merchantLogin(@RequestBody @Valid LoginDTO loginDTO){
+        ApiKeyResponse response = merchantService.merchantLogin(loginDTO);
+        return ResponseEntity.status(HttpStatus.OK)
+                .body(new ApiResponse<>("Merchant profile!",
+                        HttpStatus.OK.value(),
+                        LocalDateTime.now(),
+                        response));
     }
 
-    @PostMapping
+    @GetMapping("/profile")
+    public ResponseEntity<ApiResponse<Merchant>> getProfile(@RequestHeader("X-API-KEY") String apiKey){
+        Merchant merchant = merchantService.getProfile(apiKey);
+        return ResponseEntity.status(HttpStatus.OK)
+                .body(new ApiResponse<>("Merchant api key found!",
+                        HttpStatus.OK.value(),
+                        LocalDateTime.now(),
+                        merchant));
+    }
+
+    @PostMapping("/register")
     public ResponseEntity<ApiResponse<MerchantResponse>> registerNewMerchant(@RequestBody @Valid MerchantDTO merchantDTO){
         MerchantResponse merchant = merchantService.registerNewMerchant(merchantDTO);
         return ResponseEntity.status(HttpStatus.CREATED)
