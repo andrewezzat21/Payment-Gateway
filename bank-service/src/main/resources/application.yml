@@ -1,0 +1,12 @@
+spring:
+  application:
+    name: bank-service
+  datasource:
+    url: jdbc:mysql://localhost:3307/bank_service
+    username: root
+    password: root
+  jpa:
+    hibernate:
+      ddl-auto: update
+server:
+  port: 8090
