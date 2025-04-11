@@ -1,6 +1,5 @@
 package com.andrew.merchant_service.dto;
 
-import com.andrew.merchant_service.entity.CardType;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
 import jakarta.validation.constraints.*;
@@ -31,9 +30,6 @@ public record MerchantDTO(
         @Size(min = 16, max = 16, message = "Card number must be 16 digits")
         String cardNumber,
 
-        @NotBlank(message = "CVV is required")
-        @Pattern(regexp = "\\d{3,4}", message = "CVV must be 3 or 4 digits")
-        String cvv,
 
         @NotNull(message = "Card type is required")
         @Enumerated(EnumType.STRING)

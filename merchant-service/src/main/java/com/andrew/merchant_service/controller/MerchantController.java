@@ -2,6 +2,7 @@ package com.andrew.merchant_service.controller;
 
 import com.andrew.merchant_service.dto.*;
 import com.andrew.merchant_service.entity.Merchant;
+import com.andrew.merchant_service.kafka.KafkaProducer;
 import com.andrew.merchant_service.service.MerchantService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -9,6 +10,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 @RestController
@@ -17,8 +19,9 @@ import java.time.LocalDateTime;
 public class MerchantController {
 
     private final MerchantService merchantService;
+    private final KafkaProducer kafkaProducer;
 
-    @GetMapping("/login")
+    @PostMapping("/login")
     public ResponseEntity<ApiResponse<ApiKeyResponse>> merchantLogin(@RequestBody @Valid LoginDTO loginDTO){
         ApiKeyResponse response = merchantService.merchantLogin(loginDTO);
         return ResponseEntity.status(HttpStatus.OK)
@@ -60,5 +63,15 @@ public class MerchantController {
                         LocalDateTime.now(),
                         merchant));
     }
+
+    @PostMapping("/test")
+    public void test(){
+        CardInfoDTO cardInfoDTO = new CardInfoDTO("1234567891234567",
+                "Andrew",
+                CardType.VISA,
+                LocalDate.of(2027, 6, 30));
+        kafkaProducer.sendMessage(cardInfoDTO);
+    }
+
 
 }

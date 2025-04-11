@@ -8,5 +8,15 @@ spring:
   jpa:
     hibernate:
       ddl-auto: update
+  kafka:
+    consumer:
+      bootstrap-servers: localhost:9092
+      group-id: paymentGateway
+      auto-offset-reset: earliest
+      key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+      value-deserializer: org.springframework.kafka.support.serializer.JsonDeserializer
+      properties:
+        spring.json.trusted.packages: '*'
+        spring.json.type.mapping: cardInfoDTO:com.andrew.bank_service.dto.CardInfoDTO
 server:
   port: 8090

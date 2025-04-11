@@ -52,10 +52,9 @@ public class MerchantService {
                 .build();
 
         MerchantCardInfo merchantCardInfo = MerchantCardInfo.builder()
-                .cvv(merchantDTO.cvv())
                 .merchant(merchant)
-                .cardholderName(merchantDTO.cardholderName())
-                .cardNumber(merchantDTO.cardNumber())
+                .cardholderName(passwordEncoder.encode(merchantDTO.cardholderName()))
+                .cardNumber(passwordEncoder.encode(merchantDTO.cardNumber()))
                 .cardType(merchantDTO.cardType())
                 .expiryDate(merchantDTO.expiryDate())
                 .build();
@@ -102,11 +101,10 @@ public class MerchantService {
         merchantDetails.setLastName(merchantDTO.lastName());
         merchantDetails.setPhoneNumber(merchantDTO.phoneNumber());
 
-        merchantCardInfo.setCardNumber(merchantDTO.cardNumber());
+        merchantCardInfo.setCardNumber(passwordEncoder.encode(merchantDTO.cardNumber()));
         merchantCardInfo.setCardType(merchantDTO.cardType());
-        merchantCardInfo.setCvv(merchantDTO.cvv());
         merchantCardInfo.setExpiryDate(merchantDTO.expiryDate());
-        merchantCardInfo.setCardholderName(merchantDTO.cardholderName());
+        merchantCardInfo.setCardholderName(passwordEncoder.encode(merchantDTO.cardholderName()));
 
         merchant.setMerchantDetails(merchantDetails);
         merchant.setMerchantCardInfo(merchantCardInfo);

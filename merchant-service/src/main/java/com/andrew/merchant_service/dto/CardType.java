@@ -1,4 +1,4 @@
-package com.andrew.bank_service.entity;
+package com.andrew.merchant_service.dto;
 
 public enum CardType {
     VISA,
