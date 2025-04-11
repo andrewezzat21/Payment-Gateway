@@ -1,9 +1,6 @@
 package com.andrew.merchant_service.service;
 
-import com.andrew.merchant_service.dto.ApiKeyResponse;
-import com.andrew.merchant_service.dto.LoginDTO;
-import com.andrew.merchant_service.dto.MerchantDTO;
-import com.andrew.merchant_service.dto.MerchantResponse;
+import com.andrew.merchant_service.dto.*;
 import com.andrew.merchant_service.entity.Merchant;
 import com.andrew.merchant_service.entity.MerchantCardInfo;
 import com.andrew.merchant_service.entity.MerchantDetails;
@@ -22,9 +19,7 @@ import java.util.UUID;
 public class MerchantService {
 
     private final MerchantRepository merchantRepository;
-    private final MerchantCardInfoRepository merchantCardInfoRepository;
-    private final MerchantDetailsRepository merchantDetailsRepository;
-    private final BCryptPasswordEncoder passwordEncoder;
+    private final EncryptionService encryptionService;
 
     public String createApiKey() {
         return UUID.randomUUID().toString();
@@ -40,7 +35,7 @@ public class MerchantService {
         Merchant merchant = Merchant
                 .builder()
                 .email(merchantDTO.email())
-                .password(passwordEncoder.encode(merchantDTO.password()))
+                .password(encryptionService.encodePassword(merchantDTO.password()))
                 .apiKey(createApiKey())
                 .build();
 
@@ -51,16 +46,12 @@ public class MerchantService {
                 .merchant(merchant)
                 .build();
 
-        MerchantCardInfo merchantCardInfo = MerchantCardInfo.builder()
-                .merchant(merchant)
-                .cardholderName(passwordEncoder.encode(merchantDTO.cardholderName()))
-                .cardNumber(passwordEncoder.encode(merchantDTO.cardNumber()))
-                .cardType(merchantDTO.cardType())
-                .expiryDate(merchantDTO.expiryDate())
-                .build();
-
         merchant.setMerchantDetails(merchantDetails);
+
+        MerchantCardInfo merchantCardInfo = new MerchantCardInfo();
+        merchantCardInfo.setMerchant(merchant);
         merchant.setMerchantCardInfo(merchantCardInfo);
+
         merchantRepository.save(merchant);
 
         return MerchantResponse.builder()
@@ -75,7 +66,7 @@ public class MerchantService {
         Merchant merchant = merchantRepository.findByEmail(loginDTO.email()).
                 orElseThrow(() -> new RuntimeException("Email and/or Password is incorrect!"));
 
-        if (!passwordEncoder.matches(loginDTO.password(), merchant.getPassword())) {
+        if (!encryptionService.comparePassword(loginDTO.password(), merchant.getPassword())) {
             throw new RuntimeException("Email and/or Password is incorrect!");
         }
 
@@ -88,28 +79,50 @@ public class MerchantService {
     }
 
     @Transactional
-    public Merchant updateProfile(String apiKey, MerchantDTO merchantDTO) {
+    public MerchantResponse updateProfile(String apiKey, MerchantDTO merchantDTO) {
         Merchant merchant = merchantRepository.findByApiKey(apiKey)
                 .orElseThrow(() -> new RuntimeException("Profile not Found!"));
         MerchantDetails merchantDetails = merchant.getMerchantDetails();
-        MerchantCardInfo merchantCardInfo = merchant.getMerchantCardInfo();
 
         merchant.setEmail(merchantDTO.email());
-        merchant.setPassword(passwordEncoder.encode(merchantDTO.password()));
+        merchant.setPassword(encryptionService.encodePassword(merchantDTO.password()));
 
         merchantDetails.setFirstName(merchantDTO.firstName());
         merchantDetails.setLastName(merchantDTO.lastName());
         merchantDetails.setPhoneNumber(merchantDTO.phoneNumber());
 
-        merchantCardInfo.setCardNumber(passwordEncoder.encode(merchantDTO.cardNumber()));
-        merchantCardInfo.setCardType(merchantDTO.cardType());
-        merchantCardInfo.setExpiryDate(merchantDTO.expiryDate());
-        merchantCardInfo.setCardholderName(passwordEncoder.encode(merchantDTO.cardholderName()));
 
         merchant.setMerchantDetails(merchantDetails);
-        merchant.setMerchantCardInfo(merchantCardInfo);
         merchantRepository.save(merchant);
 
-        return merchant;
+        return MerchantResponse.builder()
+                .merchantId(merchant.getMerchantId())
+                .firstName(merchantDetails.getFirstName())
+                .lastName(merchantDetails.getLastName())
+                .email(merchant.getEmail())
+                .build();
+    }
+
+    @Transactional
+    public MerchantResponse updateCardInfo(String apiKey, CardInfoDTO cardInfoDTO) {
+        Merchant merchant = merchantRepository.findByApiKey(apiKey)
+                .orElseThrow(() -> new RuntimeException("Profile not Found!"));
+        MerchantCardInfo merchantCardInfo = merchant.getMerchantCardInfo();
+
+        MerchantDetails merchantDetails = merchant.getMerchantDetails();
+
+        merchantCardInfo.setCardType(cardInfoDTO.cardType());
+        merchantCardInfo.setExpiryDate(cardInfoDTO.expiryDate());
+        merchantCardInfo.setCardNumber(encryptionService.encrypt(cardInfoDTO.cardNumber()));
+        merchantCardInfo.setCardholderName(encryptionService.encrypt(cardInfoDTO.cardholderName()));
+
+        merchantRepository.save(merchant);
+
+        return MerchantResponse.builder()
+                .merchantId(merchant.getMerchantId())
+                .firstName(merchantDetails.getFirstName())
+                .lastName(merchantDetails.getLastName())
+                .email(merchant.getEmail())
+                .build();
     }
 }

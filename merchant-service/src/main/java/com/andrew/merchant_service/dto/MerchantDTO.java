@@ -24,23 +24,6 @@ public record MerchantDTO(
         String lastName,
 
         @NotBlank(message = "Phone number is required")
-        String phoneNumber,
-
-        @NotBlank(message = "Card number is required")
-        @Size(min = 16, max = 16, message = "Card number must be 16 digits")
-        String cardNumber,
-
-
-        @NotNull(message = "Card type is required")
-        @Enumerated(EnumType.STRING)
-        CardType cardType,
-
-        @NotBlank(message = "Cardholder name is required")
-        @Size(max = 100, message = "Cardholder name must be at most 100 characters")
-        String cardholderName,
-
-        @NotNull(message = "Expiry date is required")
-        @Future(message = "Expiry date must be in the future")
-        LocalDate expiryDate
+        String phoneNumber
 ) {
 }
