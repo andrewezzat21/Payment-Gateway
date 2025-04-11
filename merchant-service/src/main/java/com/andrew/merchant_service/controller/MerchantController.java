@@ -48,4 +48,17 @@ public class MerchantController {
                         merchant));
     }
 
+    @PutMapping("/profile")
+    public ResponseEntity<ApiResponse<Merchant>> updateProfile(
+            @RequestHeader("X-API-KEY") String apiKey,
+            @RequestBody @Valid MerchantDTO merchantDTO
+    ){
+        Merchant merchant = merchantService.updateProfile(apiKey, merchantDTO);
+        return ResponseEntity.status(HttpStatus.CREATED)
+                .body(new ApiResponse<>("Merchant information updated successfully!",
+                        HttpStatus.OK.value(),
+                        LocalDateTime.now(),
+                        merchant));
+    }
+
 }
