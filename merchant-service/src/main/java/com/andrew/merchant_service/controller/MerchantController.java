@@ -69,22 +69,22 @@ public class MerchantController {
             @RequestHeader("X-API-KEY") String apiKey,
             @RequestBody @Valid CardInfoDTO cardInfoDTO
     ){
-        MerchantResponse merchantResponse = merchantService.updateCardInfo(apiKey, cardInfoDTO);
-        return ResponseEntity.status(HttpStatus.OK)
-                .body(new ApiResponse<>("Merchant card information updated successfully!",
-                        HttpStatus.OK.value(),
+        merchantService.validateCardInfo(apiKey, cardInfoDTO);
+        return ResponseEntity.status(HttpStatus.ACCEPTED)
+                .body(new ApiResponse<>("Merchant card information being validated! Check email",
+                        HttpStatus.ACCEPTED.value(),
                         LocalDateTime.now(),
-                        merchantResponse));
+                        null));
     }
 
-    @PostMapping("/test")
-    public void test(){
-        CardInfoDTO cardInfoDTO = new CardInfoDTO("1234567891234567",
-                CardType.VISA,
-                "Andrew Ezzat",
-                LocalDate.of(2027, 6, 30));
-        kafkaProducer.sendMessage(cardInfoDTO);
-    }
+//    @PostMapping("/test")
+//    public void test(){
+//        CardInfoDTO cardInfoDTO = new CardInfoDTO("1234567891234567",
+//                CardType.VISA,
+//                "Andrew Ezzat",
+//                LocalDate.of(2027, 6, 30));
+//        kafkaProducer.sendMessage(cardInfoDTO);
+//    }
 
 
 }

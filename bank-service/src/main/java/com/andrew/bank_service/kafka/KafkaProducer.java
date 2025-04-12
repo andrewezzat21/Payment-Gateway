@@ -1,4 +1,4 @@
-package com.andrew.merchant_service.kafka;
+package com.andrew.bank_service.kafka;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.kafka.core.KafkaTemplate;
@@ -11,12 +11,12 @@ import org.springframework.stereotype.Service;
 @RequiredArgsConstructor
 public class KafkaProducer {
 
-    private final KafkaTemplate<String, CardValidationRequest> kafkaTemplate;
+    private final KafkaTemplate<String, CardValidationResponse> kafkaTemplate;
 
-    public void sendCardDTO_ToBank(CardValidationRequest cardValidationRequest) {
-        Message<CardValidationRequest> message = MessageBuilder
-                .withPayload(cardValidationRequest)
-                .setHeader(KafkaHeaders.TOPIC, "bank-card-validation")
+    public void sendCardResponse(CardValidationResponse cardValidationResponse) {
+        Message<CardValidationResponse> message = MessageBuilder
+                .withPayload(cardValidationResponse)
+                .setHeader(KafkaHeaders.TOPIC, "card-response")
                 .build();
 
         kafkaTemplate.send(message);

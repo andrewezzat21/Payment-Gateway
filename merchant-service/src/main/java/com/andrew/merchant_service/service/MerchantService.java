@@ -4,14 +4,16 @@ import com.andrew.merchant_service.dto.*;
 import com.andrew.merchant_service.entity.Merchant;
 import com.andrew.merchant_service.entity.MerchantCardInfo;
 import com.andrew.merchant_service.entity.MerchantDetails;
-import com.andrew.merchant_service.repository.MerchantCardInfoRepository;
-import com.andrew.merchant_service.repository.MerchantDetailsRepository;
+import com.andrew.merchant_service.kafka.CardValidationRequest;
+import com.andrew.merchant_service.kafka.CardValidationResponse;
+import com.andrew.merchant_service.kafka.KafkaProducer;
 import com.andrew.merchant_service.repository.MerchantRepository;
 import lombok.RequiredArgsConstructor;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.HashMap;
+import java.util.Map;
 import java.util.UUID;
 
 @Service
@@ -20,6 +22,8 @@ public class MerchantService {
 
     private final MerchantRepository merchantRepository;
     private final EncryptionService encryptionService;
+    private final KafkaProducer kafkaProducer;
+    private static final Map<String, Long> requestIDMerchantMap = new HashMap<>();
 
     public String createApiKey() {
         return UUID.randomUUID().toString();
@@ -103,26 +107,54 @@ public class MerchantService {
                 .build();
     }
 
-    @Transactional
-    public MerchantResponse updateCardInfo(String apiKey, CardInfoDTO cardInfoDTO) {
+
+    public void validateCardInfo(String apiKey, CardInfoDTO cardInfoDTO){
         Merchant merchant = merchantRepository.findByApiKey(apiKey)
                 .orElseThrow(() -> new RuntimeException("Profile not Found!"));
-        MerchantCardInfo merchantCardInfo = merchant.getMerchantCardInfo();
 
-        MerchantDetails merchantDetails = merchant.getMerchantDetails();
+        CardInfoDTO encryptedCardInfo = new CardInfoDTO(
+                encryptionService.encrypt(cardInfoDTO.cardNumber()),
+                cardInfoDTO.cardType(),
+                encryptionService.encrypt(cardInfoDTO.cardholderName()),
+                cardInfoDTO.expiryDate()
+        );
 
-        merchantCardInfo.setCardType(cardInfoDTO.cardType());
-        merchantCardInfo.setExpiryDate(cardInfoDTO.expiryDate());
-        merchantCardInfo.setCardNumber(encryptionService.encrypt(cardInfoDTO.cardNumber()));
-        merchantCardInfo.setCardholderName(encryptionService.encrypt(cardInfoDTO.cardholderName()));
+        String requestId = UUID.randomUUID().toString();
+        Long merchantId = merchant.getMerchantId();
+        requestIDMerchantMap.put(requestId,merchantId);
 
-        merchantRepository.save(merchant);
+        CardValidationRequest cardValidationRequest = new CardValidationRequest(requestId, encryptedCardInfo);
+        kafkaProducer.sendCardDTO_ToBank(cardValidationRequest);
+    }
 
-        return MerchantResponse.builder()
-                .merchantId(merchant.getMerchantId())
-                .firstName(merchantDetails.getFirstName())
-                .lastName(merchantDetails.getLastName())
-                .email(merchant.getEmail())
-                .build();
+    @Transactional
+    public void updateCardInfo(CardValidationResponse cardValidationResponse) {
+
+        String requestId = cardValidationResponse.requestId();
+        CardInfoDTO cardInfoDTO = cardValidationResponse.cardInfoDTO();
+        Long merchantId = requestIDMerchantMap.get(requestId);
+        requestIDMerchantMap.remove(requestId);
+
+        String status = cardValidationResponse.status();
+
+        if(status.equals("true")){
+            Merchant merchant = merchantRepository.findByMerchantId(merchantId)
+                    .orElseThrow(() -> new RuntimeException("Profile not Found!"));
+
+            MerchantCardInfo merchantCardInfo = merchant.getMerchantCardInfo();
+
+            merchantCardInfo.setCardType(cardInfoDTO.cardType());
+            merchantCardInfo.setExpiryDate(cardInfoDTO.expiryDate());
+            merchantCardInfo.setCardNumber(encryptionService.encrypt(cardInfoDTO.cardNumber()));
+            merchantCardInfo.setCardholderName(encryptionService.encrypt(cardInfoDTO.cardholderName()));
+
+            merchantRepository.save(merchant);
+
+            //TODO : Notification of confirmation of a valid card register
+
+        }
+        else{
+            //TODO : Notification of invalid card card register
+        }
     }
 }
