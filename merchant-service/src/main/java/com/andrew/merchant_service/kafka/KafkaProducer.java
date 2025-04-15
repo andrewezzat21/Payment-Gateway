@@ -13,6 +13,7 @@ public class KafkaProducer {
 
     private final KafkaTemplate<String, CardValidationRequest> kafkaCardTemplate;
     private final KafkaTemplate<String, KafkaLinkRequest> kafkaLinkTemplate;
+    private final KafkaTemplate<String, CardResponse> kafkaCardResponseTemplate;
 
 
     public void createPaymentLink(KafkaLinkRequest kafkaLinkRequest) {
@@ -32,4 +33,14 @@ public class KafkaProducer {
 
         kafkaCardTemplate.send(message);
     }
+
+    public void sendCardToPayment(CardResponse cardResponse) {
+        Message<CardResponse> message = MessageBuilder
+                .withPayload(cardResponse)
+                .setHeader(KafkaHeaders.TOPIC, "merchant-card-response")
+                .build();
+
+        kafkaCardResponseTemplate.send(message);
+    }
+
 }

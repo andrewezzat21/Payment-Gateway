@@ -17,4 +17,14 @@ public class KafkaConsumer {
         paymentsService.createPaymentLink(kafkaLinkRequest);
     }
 
+    @KafkaListener(topics = "merchant-card-response", groupId = "paymentGateway")
+    public void consumeCardResponse(@Payload CardResponse cardResponse){
+        paymentsService.createTransactionRequest(cardResponse);
+    }
+
+    @KafkaListener(topics = "transaction-response", groupId = "paymentGateway")
+    public void consumeTransactionResponse(@Payload TransactionResponse transactionResponse){
+        paymentsService.updatePaymentStatus(transactionResponse);
+    }
+
 }

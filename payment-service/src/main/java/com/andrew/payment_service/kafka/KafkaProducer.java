@@ -12,6 +12,8 @@ import org.springframework.stereotype.Service;
 public class KafkaProducer {
 
     private final KafkaTemplate<String, KafkaLinkResponse> kafkaLinkTemplate;
+    private final KafkaTemplate<String, TransactionRequest> kafkaTransactionTemplate;
+    private final KafkaTemplate<String, CardRequest> kafkaCardTemplate;
 
 
     public void linkResponse(KafkaLinkResponse kafkaLinkResponse) {
@@ -21,6 +23,24 @@ public class KafkaProducer {
                 .build();
 
         kafkaLinkTemplate.send(message);
+    }
+
+    public void transactionRequest(TransactionRequest transactionRequest) {
+        Message<TransactionRequest> message = MessageBuilder
+                .withPayload(transactionRequest)
+                .setHeader(KafkaHeaders.TOPIC, "transaction-request")
+                .build();
+
+        kafkaTransactionTemplate.send(message);
+    }
+
+    public void cardRequest(CardRequest cardRequest) {
+        Message<CardRequest> message = MessageBuilder
+                .withPayload(cardRequest)
+                .setHeader(KafkaHeaders.TOPIC, "card-request")
+                .build();
+
+        kafkaCardTemplate.send(message);
     }
 
 }

@@ -4,10 +4,7 @@ import com.andrew.merchant_service.dto.*;
 import com.andrew.merchant_service.entity.Merchant;
 import com.andrew.merchant_service.entity.MerchantCardInfo;
 import com.andrew.merchant_service.entity.MerchantDetails;
-import com.andrew.merchant_service.kafka.CardValidationRequest;
-import com.andrew.merchant_service.kafka.CardValidationResponse;
-import com.andrew.merchant_service.kafka.KafkaLinkRequest;
-import com.andrew.merchant_service.kafka.KafkaProducer;
+import com.andrew.merchant_service.kafka.*;
 import com.andrew.merchant_service.repository.MerchantRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -146,8 +143,8 @@ public class MerchantService {
 
             merchantCardInfo.setCardType(cardInfoDTO.cardType());
             merchantCardInfo.setExpiryDate(cardInfoDTO.expiryDate());
-            merchantCardInfo.setCardNumber(encryptionService.encrypt(cardInfoDTO.cardNumber()));
-            merchantCardInfo.setCardholderName(encryptionService.encrypt(cardInfoDTO.cardholderName()));
+            merchantCardInfo.setCardNumber(cardInfoDTO.cardNumber());
+            merchantCardInfo.setCardholderName(cardInfoDTO.cardholderName());
 
             merchantRepository.save(merchant);
 
@@ -174,5 +171,22 @@ public class MerchantService {
         kafkaProducer.createPaymentLink(kafkaLinkRequest);
 
         return paymentLinkResponse;
+    }
+
+    public void getCardInfo(CardRequest cardRequest) {
+        Merchant merchant = merchantRepository.findByMerchantId(cardRequest.merchantId())
+                .orElseThrow(() -> new RuntimeException("Profile not Found!"));
+
+        MerchantCardInfo merchantCardInfo = merchant.getMerchantCardInfo();
+
+        CardInfo cardInfo = new CardInfo(
+                merchantCardInfo.getCardNumber(),
+                merchantCardInfo.getCardholderName(),
+                merchantCardInfo.getCardType(),
+                merchantCardInfo.getExpiryDate()
+        );
+
+        CardResponse cardResponse = new CardResponse(cardRequest.paymentId(), cardInfo);
+        kafkaProducer.sendCardToPayment(cardResponse);
     }
 }

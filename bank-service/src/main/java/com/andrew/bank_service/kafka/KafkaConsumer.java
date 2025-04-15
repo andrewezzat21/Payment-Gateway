@@ -27,4 +27,10 @@ public class KafkaConsumer {
         kafkaProducer.sendCardResponse(response);
     }
 
+    @KafkaListener(topics = "transaction-request", groupId = "paymentGateway")
+    public void consumeTransactionRequest(@Payload TransactionRequest transactionRequest){
+        System.out.println(transactionRequest.toString());
+        bankService.makeTransaction(transactionRequest);
+    }
+
 }

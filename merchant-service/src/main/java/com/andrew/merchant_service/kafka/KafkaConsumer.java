@@ -17,6 +17,11 @@ public class KafkaConsumer {
         merchantService.updateCardInfo(cardValidationResponse);
     }
 
+    @KafkaListener(topics = "card-request", groupId = "paymentGateway")
+    public void consumeCardRequest(@Payload CardRequest cardRequest){
+        merchantService.getCardInfo(cardRequest);
+    }
+
     @KafkaListener(topics = "link-response", groupId = "paymentGateway")
     public void consumeLinkResponse(@Payload KafkaLinkResponse kafkaLinkResponse){
         // TODO: Notify merchant: kafkaLinkResponse.merchantID

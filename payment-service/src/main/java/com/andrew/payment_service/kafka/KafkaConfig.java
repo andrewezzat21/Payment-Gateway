@@ -15,4 +15,18 @@ public class KafkaConfig {
                 .build();
     }
 
+    @Bean
+    public NewTopic cardRequest() {
+        return TopicBuilder
+                .name("card-request")
+                .build();
+    }
+
+    @Bean
+    public NewTopic transactionRequest() {
+        return TopicBuilder
+                .name("transaction-request")
+                .build();
+    }
+
 }

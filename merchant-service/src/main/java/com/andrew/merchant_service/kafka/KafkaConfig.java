@@ -22,5 +22,12 @@ public class KafkaConfig {
                 .build();
     }
 
+    @Bean
+    public NewTopic cardResponse(){
+        return TopicBuilder
+                .name("merchant-card-response")
+                .build();
+    }
+
 
 }

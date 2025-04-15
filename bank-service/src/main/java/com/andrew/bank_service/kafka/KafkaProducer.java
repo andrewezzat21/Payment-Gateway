@@ -12,6 +12,7 @@ import org.springframework.stereotype.Service;
 public class KafkaProducer {
 
     private final KafkaTemplate<String, CardValidationResponse> kafkaTemplate;
+    private final KafkaTemplate<String, TransactionResponse> kafkaTransactionResponse;
 
     public void sendCardResponse(CardValidationResponse cardValidationResponse) {
         Message<CardValidationResponse> message = MessageBuilder
@@ -20,5 +21,14 @@ public class KafkaProducer {
                 .build();
 
         kafkaTemplate.send(message);
+    }
+
+    public void sendTransactionResponse(TransactionResponse transactionResponse) {
+        Message<TransactionResponse> message = MessageBuilder
+                .withPayload(transactionResponse)
+                .setHeader(KafkaHeaders.TOPIC, "transaction-response")
+                .build();
+
+        kafkaTransactionResponse.send(message);
     }
 }

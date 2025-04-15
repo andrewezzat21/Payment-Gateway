@@ -16,5 +16,13 @@ public class KafkaConfig {
                 .build();
     }
 
+    @Bean
+    public NewTopic transactionResponse(){
+        return TopicBuilder
+                .name("transaction-response")
+                .build();
+    }
+
+
 
 }

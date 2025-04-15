@@ -14,7 +14,7 @@ spring:
       key-serializer: org.apache.kafka.common.serialization.StringSerializer
       value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
       properties:
-        spring.json.type.mapping: kafkaLinkResponse:com.andrew.payment_service.kafka.KafkaLinkResponse
+        spring.json.type.mapping: kafkaLinkResponse:com.andrew.payment_service.kafka.KafkaLinkResponse,transactionRequest:com.andrew.payment_service.kafka.TransactionRequest,cardRequest:com.andrew.payment_service.kafka.CardRequest
     consumer:
       bootstrap-servers: localhost:9092
       group-id: paymentGateway
@@ -23,7 +23,7 @@ spring:
       value-deserializer: org.springframework.kafka.support.serializer.JsonDeserializer
       properties:
         spring.json.trusted.packages: '*'
-        spring.json.type.mapping: kafkaLinkRequest:com.andrew.payment_service.kafka.KafkaLinkRequest
+        spring.json.type.mapping: kafkaLinkRequest:com.andrew.payment_service.kafka.KafkaLinkRequest,cardResponse:com.andrew.payment_service.kafka.CardResponse,transactionResponse:com.andrew.payment_service.kafka.TransactionResponse
 
 server:
   port: 8092

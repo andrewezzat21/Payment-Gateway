@@ -1,6 +1,7 @@
 package com.andrew.payment_service.entity;
 
 import com.andrew.payment_service.dto.Currency;
+import com.andrew.payment_service.dto.Status;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
