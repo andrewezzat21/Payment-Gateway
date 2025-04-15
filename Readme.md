@@ -45,7 +45,6 @@ This project handles merchant management, secure payment links, and transaction 
 - Docker  
 - Apache Kafka  
 - Eureka Discovery Server  
-- Spring Cloud Config Server  
 
 ---
 
