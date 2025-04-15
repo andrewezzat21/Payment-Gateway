@@ -11,7 +11,10 @@
 - [Architecture Overview](#architecture-overview)
   - [System Design Overview](#system-design-overview)
   - [Microservices Responsibilities](#microservices-responsibilities)
+- [System Flow](#system-flow)
 - [Entity-Relationship Diagram (ERD)](#entity-relationship-diagram-erd)
+- [Kafka Inner Service Communication](#kafka-inner-service-communication)
+
 - [API Documentation](#api-documentation)
   - [Merchant Service](#merchant-service)
   - [Payment Service](#payment-service)
@@ -75,9 +78,20 @@ Communication between services is handled via Kafka.
 
 ---
 
+## System Flow
+![Concept map - Page 1 (4)](https://github.com/user-attachments/assets/5ffe73e1-e1ef-4704-b8a8-9eedd0be4d36)
+
+
+---
+
+
 ## Entity-Relationship Diagram (ERD)
 ![Concept map - Page 1](https://github.com/user-attachments/assets/966a42fc-f7fd-4f24-b100-e5c22f33459a)
 
+---
+
+## Kafka Inner Service Communication
+![Concept map - Page 1 (3)](https://github.com/user-attachments/assets/5368c904-498f-4d28-a751-6ff612445d30)
 
 
 ---
