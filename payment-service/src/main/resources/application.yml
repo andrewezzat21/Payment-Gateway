@@ -1,0 +1,13 @@
+spring:
+  application:
+    name: payment-service
+  datasource:
+    url: jdbc:mysql://localhost:3309/payment_service
+    username: root
+    password: root
+  jpa:
+    hibernate:
+      ddl-auto: update
+
+server:
+  port: 8092

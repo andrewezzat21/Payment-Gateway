@@ -11,7 +11,10 @@ spring:
           uri: lb://MERCHANT-SERVICE
           predicates:
             - Path=/api/v1/merchants/**
-
+        - id: payment-service
+          uri: lb://PAYMENT-SERVICE
+          predicates:
+            - Path=/api/v1/payments/**
 
 logging:
   level:

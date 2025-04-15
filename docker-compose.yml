@@ -49,7 +49,20 @@ services:
     volumes:
       - merchant_data:/var/lib/mysql
 
+  mysql-payment:
+    image: mysql
+    container_name: mysql-payment
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: payment_service
+    ports:
+      - "3309:3306"
+    volumes:
+      - payment_data:/var/lib/mysql
+
 
 volumes:
   bank_data:
   merchant_data:
+  payment_data:
