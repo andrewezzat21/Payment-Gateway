@@ -1,4 +1,4 @@
-package com.andrew.merchant_service.kafka;
+package com.andrew.payment_service.kafka;
 
 import org.apache.kafka.clients.admin.NewTopic;
 import org.springframework.context.annotation.Bean;
@@ -9,18 +9,10 @@ import org.springframework.kafka.config.TopicBuilder;
 public class KafkaConfig {
 
     @Bean
-    public NewTopic bankCardValidation(){
+    public NewTopic linkResponse() {
         return TopicBuilder
-                .name("bank-card-validation")
+                .name("link-response")
                 .build();
     }
-
-    @Bean
-    public NewTopic linkRequest(){
-        return TopicBuilder
-                .name("link-request")
-                .build();
-    }
-
 
 }

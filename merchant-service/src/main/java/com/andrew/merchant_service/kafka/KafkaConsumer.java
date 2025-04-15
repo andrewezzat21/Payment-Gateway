@@ -17,4 +17,10 @@ public class KafkaConsumer {
         merchantService.updateCardInfo(cardValidationResponse);
     }
 
+    @KafkaListener(topics = "link-response", groupId = "paymentGateway")
+    public void consumeLinkResponse(@Payload KafkaLinkResponse kafkaLinkResponse){
+        // TODO: Notify merchant: kafkaLinkResponse.merchantID
+        //       about creation of the link: kafkaLinkResponse.linkId
+    }
+
 }

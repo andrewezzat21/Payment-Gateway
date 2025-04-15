@@ -11,7 +11,18 @@ import org.springframework.stereotype.Service;
 @RequiredArgsConstructor
 public class KafkaProducer {
 
-    private final KafkaTemplate<String, CardValidationRequest> kafkaTemplate;
+    private final KafkaTemplate<String, CardValidationRequest> kafkaCardTemplate;
+    private final KafkaTemplate<String, KafkaLinkRequest> kafkaLinkTemplate;
+
+
+    public void createPaymentLink(KafkaLinkRequest kafkaLinkRequest) {
+        Message<KafkaLinkRequest> message = MessageBuilder
+                .withPayload(kafkaLinkRequest)
+                .setHeader(KafkaHeaders.TOPIC, "link-request")
+                .build();
+
+        kafkaLinkTemplate.send(message);
+    }
 
     public void sendCardDTO_ToBank(CardValidationRequest cardValidationRequest) {
         Message<CardValidationRequest> message = MessageBuilder
@@ -19,6 +30,6 @@ public class KafkaProducer {
                 .setHeader(KafkaHeaders.TOPIC, "bank-card-validation")
                 .build();
 
-        kafkaTemplate.send(message);
+        kafkaCardTemplate.send(message);
     }
 }

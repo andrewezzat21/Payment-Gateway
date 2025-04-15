@@ -14,7 +14,7 @@ spring:
       key-serializer: org.apache.kafka.common.serialization.StringSerializer
       value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
       properties:
-        spring.json.type.mapping: cardValidationRequest:com.andrew.merchant_service.kafka.CardValidationRequest
+        spring.json.type.mapping: cardValidationRequest:com.andrew.merchant_service.kafka.CardValidationRequest,kafkaLinkRequest:com.andrew.merchant_service.kafka.KafkaLinkRequest
     consumer:
       bootstrap-servers: localhost:9092
       group-id: paymentGateway
@@ -23,6 +23,6 @@ spring:
       value-deserializer: org.springframework.kafka.support.serializer.JsonDeserializer
       properties:
         spring.json.trusted.packages: '*'
-        spring.json.type.mapping: cardValidationResponse:com.andrew.merchant_service.kafka.CardValidationResponse
+        spring.json.type.mapping: cardValidationResponse:com.andrew.merchant_service.kafka.CardValidationResponse,kafkaLinkResponse:com.andrew.merchant_service.kafka.KafkaLinkResponse
 server:
   port: 8091

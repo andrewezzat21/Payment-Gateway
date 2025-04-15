@@ -1,4 +1,4 @@
-package com.andrew.payment_service.entity;
+package com.andrew.payment_service.dto;
 
 public enum Currency {
     EGP, USD, EUR

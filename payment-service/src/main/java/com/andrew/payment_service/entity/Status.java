@@ -1,5 +1,7 @@
 package com.andrew.payment_service.entity;
 
 public enum Status {
-    PENDING, EXPIRED, PAID
+    PENDING,
+    EXPIRED,
+    PAID
 }

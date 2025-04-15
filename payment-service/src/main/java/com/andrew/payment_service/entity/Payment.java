@@ -28,6 +28,10 @@ public class Payment {
 
     private LocalDateTime createdAt;
 
+    @ManyToOne
+    @JoinColumn(name = "payment_link_id", nullable = false)
+    private PaymentLink paymentLink;
+
     @PrePersist
     public void prePersist() {
         if (this.createdAt == null) {

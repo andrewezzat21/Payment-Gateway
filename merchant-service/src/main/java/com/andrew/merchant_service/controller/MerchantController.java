@@ -51,6 +51,20 @@ public class MerchantController {
                         merchant));
     }
 
+    @PostMapping("/payment-link")
+    public ResponseEntity<ApiResponse<PaymentLinkResponse>> createPaymentLink(
+            @RequestHeader("X-API-KEY") String apiKey,
+            @RequestBody @Valid PaymentLinkRequest paymentLinkRequest
+
+    ){
+        PaymentLinkResponse paymentLinkResponse = merchantService.createPaymentLink(apiKey, paymentLinkRequest);
+        return ResponseEntity.status(HttpStatus.ACCEPTED)
+                .body(new ApiResponse<>("Payment link is being created!",
+                        HttpStatus.ACCEPTED.value(),
+                        LocalDateTime.now(),
+                        paymentLinkResponse));
+    }
+
     @PutMapping("/profile")
     public ResponseEntity<ApiResponse<MerchantResponse>> updateProfile(
             @RequestHeader("X-API-KEY") String apiKey,

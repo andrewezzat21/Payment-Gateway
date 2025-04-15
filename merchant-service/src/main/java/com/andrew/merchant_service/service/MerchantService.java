@@ -6,6 +6,7 @@ import com.andrew.merchant_service.entity.MerchantCardInfo;
 import com.andrew.merchant_service.entity.MerchantDetails;
 import com.andrew.merchant_service.kafka.CardValidationRequest;
 import com.andrew.merchant_service.kafka.CardValidationResponse;
+import com.andrew.merchant_service.kafka.KafkaLinkRequest;
 import com.andrew.merchant_service.kafka.KafkaProducer;
 import com.andrew.merchant_service.repository.MerchantRepository;
 import lombok.RequiredArgsConstructor;
@@ -25,7 +26,7 @@ public class MerchantService {
     private final KafkaProducer kafkaProducer;
     private static final Map<String, Long> requestIDMerchantMap = new HashMap<>();
 
-    public String createApiKey() {
+    public String createRandomString() {
         return UUID.randomUUID().toString();
     }
 
@@ -40,7 +41,7 @@ public class MerchantService {
                 .builder()
                 .email(merchantDTO.email())
                 .password(encryptionService.encodePassword(merchantDTO.password()))
-                .apiKey(createApiKey())
+                .apiKey(createRandomString())
                 .build();
 
         MerchantDetails merchantDetails = MerchantDetails.builder()
@@ -156,5 +157,22 @@ public class MerchantService {
         else{
             //TODO : Notification of invalid card card register
         }
+    }
+
+    public PaymentLinkResponse createPaymentLink(String apiKey, PaymentLinkRequest paymentLinkRequest) {
+        Merchant merchant = merchantRepository.findByApiKey(apiKey)
+                .orElseThrow(() -> new RuntimeException("Profile not Found!"));
+
+        PaymentLinkResponse paymentLinkResponse = new PaymentLinkResponse(createRandomString());
+        KafkaLinkRequest kafkaLinkRequest = new KafkaLinkRequest(
+                merchant.getMerchantId(),
+                paymentLinkResponse.linkId(),
+                paymentLinkRequest.amount(),
+                paymentLinkRequest.currency()
+        );
+
+        kafkaProducer.createPaymentLink(kafkaLinkRequest);
+
+        return paymentLinkResponse;
     }
 }
