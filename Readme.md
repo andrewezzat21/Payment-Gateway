@@ -79,24 +79,27 @@ Communication between services is handled via Kafka.
 ---
 
 ## System Flow
-![Concept map - Page 1 (4)](https://github.com/user-attachments/assets/5ffe73e1-e1ef-4704-b8a8-9eedd0be4d36)
+![system flow](https://github.com/user-attachments/assets/5de3dbb3-bc15-4691-b602-c48a3e864b90)
 
 
 ---
 
 
 ## Entity-Relationship Diagram (ERD)
-![Concept map - Page 1](https://github.com/user-attachments/assets/966a42fc-f7fd-4f24-b100-e5c22f33459a)
+![erd2](https://github.com/user-attachments/assets/487a4490-cfcd-4ce8-9699-90769c39bd73)
 
 ---
 
 ## Kafka Inner Service Communication
-![Concept map - Page 1 (3)](https://github.com/user-attachments/assets/5368c904-498f-4d28-a751-6ff612445d30)
+![kafka](https://github.com/user-attachments/assets/6d4775c9-6d67-4932-9a12-de221ca7939f)
 
 
 ---
 
 ## API Documentation  
+
+All endpoints start with
+`/api/v1`
 
 ###  Merchant Service  
 
